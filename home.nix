@@ -11,6 +11,10 @@
     htop
   ];
 
+  home.shellAliases = {
+    rebuild = "sudo nixos-rebuild switch --flake /home/max/nix-wsl-box#nixos";
+  };
+
   # Let home-manager manage itself
   programs.home-manager.enable = true;
 
