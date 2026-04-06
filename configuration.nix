@@ -2,6 +2,7 @@
 {
   wsl.enable = true;
   wsl.defaultUser = "max";
+  networking.hostName = "nix-build";
 
   environment.systemPackages = with pkgs; [
     wget
