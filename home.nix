@@ -11,7 +11,7 @@
     htop
   ];
 
-  programs.bash = {
+  programs.fish = {
     enable = true;
     shellAliases = {
       rebuild = "sudo nixos-rebuild switch --flake /home/max/nix-wsl-box#nixos";
