@@ -6,7 +6,7 @@
 
 ## Fresh Machine Setup
 
-### 1. Install NixOS-WSL
+### Install NixOS-WSL
 
 Run the following from powershell:
 
@@ -26,20 +26,35 @@ Run the following from powershell:
   wsl -d NixOS
   ```
 
-### 2. Clone this repo
+### Add SSH Key
+
+Create new ssh keypair and add to Github.com
+
+```bash
+ssh-keygen -t ed25519 -C "youremail@gmail.com"
+```
+
+### Clone this repo
 ```bash
 nix-shell -p git --command "git clone https://github.com/m3dwards/nix-wsl-box.git ~/nix-wsl-box"
 cd ~/nix-wsl-box
 ```
 
-### 3. Apply the configuration
+### Apply the configuration
 ```bash
 sudo mv /etc/nixos/configuration.nix /etc/nixos/configuration.nix.bak
 sudo ln -s ~/nix-wsl-box/configuration.nix /etc/nixos/configuration.nix
 sudo nixos-rebuild switch
 ```
 
-### 4. Windows firewall rule
+### Switch over to using flakes
+```bash
+sudo nixos-rebuild switch --flake ~/nix-wsl-box#nixos
+# and then when the shell is restarted / sourced the rebuild command should start working
+rebuild
+```
+
+### Windows firewall rule
 
 In PowerShell (as Administrator) on the Windows host:
 ```powershell
@@ -47,7 +62,7 @@ New-NetFirewallRule -DisplayName "WSL2 NixOS SSH" -Direction Inbound `
   -Action Allow -Protocol TCP -LocalPort 4444
 ```
 
-### 5. Enable mirrored networking
+### Enable mirrored networking
 
 In `%USERPROFILE%\.wslconfig` on Windows:
 ```ini
@@ -61,7 +76,7 @@ wsl --shutdown
 wsl -d NixOS
 ```
 
-### 6. SSH from your Mac
+### SSH from your Mac
 
 Add to `~/.ssh/config` on your Mac:
 ```
@@ -79,16 +94,4 @@ ssh nixos-wsl
 
 ## Updating
 
-Manually add an SSH private key
-
-After editing `configuration.nix`, apply changes with:
-```bash
-sudo nixos-rebuild switch
-```
-
-Then commit the updated config:
-```bash
-git add configuration.nix
-git commit -m "Update configuration"
-git push
-```
+Remember to push updates to ~/nix-wsl-box to Github
