@@ -18,6 +18,11 @@
     };
   };
 
+  programs.starship = {
+    enable = true;
+    enableFishIntegration = true;
+  };
+
   # Let home-manager manage itself
   programs.home-manager.enable = true;
 
