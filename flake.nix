@@ -3,6 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
+    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
     nixos-wsl = {
       url = "github:nix-community/NixOS-WSL";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -21,14 +22,25 @@
     };
   };
 
-  outputs = { self, nixpkgs, nixos-wsl, home-manager, dotfiles, nvim, ... }:
+  outputs = { self, nixpkgs, nixpkgs-unstable, nixos-wsl, home-manager, dotfiles, nvim, ... }:
     let
       system = "x86_64-linux";
-      pkgs = import nixpkgs { inherit system; };
+      # Guix 1.5.0 comes from the unstable nixpkgs pin below.
+      guix15 = nixpkgs-unstable.legacyPackages.${system}.guix;
+      guixOverlay = final: prev: {
+        guix = guix15;
+      };
+      pkgs = import nixpkgs {
+        inherit system;
+        overlays = [ guixOverlay ];
+      };
     in {
       nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
         inherit system;
         modules = [
+          {
+            nixpkgs.overlays = [ guixOverlay ];
+          }
           nixos-wsl.nixosModules.default
           home-manager.nixosModules.home-manager
           {
@@ -50,6 +62,7 @@
           fish
         ];
         shellHook = ''
+          export PATH="${pkgs.guix}/bin:$PATH"
           export DETACHED_SIGS_REPO=/home/max/source/bitcoin-detached-sigs/
           export SIGNER=m3dwards
           export GUIX_SIGS_REPO=/home/max/source/guix.sigs/
