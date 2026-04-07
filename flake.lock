@@ -1,5 +1,21 @@
 {
   "nodes": {
+    "dotfiles": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1775248622,
+        "narHash": "sha256-Yunmlokip1GGo/9WmWrDVSeoyyoTqSa1cGkU5sv/MEw=",
+        "owner": "m3dwards",
+        "repo": "dotfiles",
+        "rev": "4e945d6c93bd16a42b62b940539df04489af48e6",
+        "type": "github"
+      },
+      "original": {
+        "owner": "m3dwards",
+        "repo": "dotfiles",
+        "type": "github"
+      }
+    },
     "flake-compat": {
       "flake": false,
       "locked": {
@@ -74,11 +90,29 @@
         "type": "github"
       }
     },
+    "nvim": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1770400679,
+        "narHash": "sha256-1wZLdvured/D20rs+vcCyTzjyPkUGXQ9we+5F38W3wI=",
+        "owner": "m3dwards",
+        "repo": "nvim",
+        "rev": "36fe067b586e2a3f0de3d07581b70cb51de47e41",
+        "type": "github"
+      },
+      "original": {
+        "owner": "m3dwards",
+        "repo": "nvim",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
+        "dotfiles": "dotfiles",
         "home-manager": "home-manager",
         "nixos-wsl": "nixos-wsl",
-        "nixpkgs": "nixpkgs"
+        "nixpkgs": "nixpkgs",
+        "nvim": "nvim"
       }
     }
   },

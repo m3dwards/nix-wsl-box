@@ -11,9 +11,17 @@
       url = "github:nix-community/home-manager/release-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    dotfiles = {
+      url = "github:m3dwards/dotfiles";
+      flake = false;
+    };
+    nvim = {
+      url = "github:m3dwards/nvim";
+      flake = false;
+    };
   };
 
-  outputs = { self, nixpkgs, nixos-wsl, home-manager, ... }: {
+  outputs = { self, nixpkgs, nixos-wsl, home-manager, dotfiles, nvim, ... }: {
     nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
@@ -23,6 +31,9 @@
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
           home-manager.users.max = import ./home.nix;
+          home-manager.extraSpecialArgs = {
+            inherit dotfiles nvim;
+          };
         }
         ./configuration.nix
       ];
