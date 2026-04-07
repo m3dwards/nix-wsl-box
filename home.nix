@@ -17,7 +17,7 @@
   };
 
   home.file = {
-    ".config/fish/config.fish".source = "${dotfiles}/fish/.config/fish/config.fish";
+    # ".config/fish/config.fish".source = "${dotfiles}/fish/.config/fish/config.fish";
     ".config/fish/conf.d/10-starship.fish".text = ''
       starship init fish | source
     '';
