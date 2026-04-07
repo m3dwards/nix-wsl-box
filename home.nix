@@ -12,6 +12,10 @@
     neovim
   ];
 
+  programs.fish = {
+    enable = true;
+  };
+
   home.file = {
     ".config/fish/config.fish".source = "${dotfiles}/fish/.config/fish/config.fish";
     ".config/fish/conf.d/10-starship.fish".text = ''
@@ -28,10 +32,6 @@
       source = nvim;
       recursive = true;
     };
-  };
-
-  programs.fish = {
-    enable = true;
   };
 
   programs.starship = {
