@@ -11,6 +11,8 @@
     direnv
   ];
 
+  programs.fish.enable = true;
+
   home.file = {
     ".config/fish/config.fish".source = "${dotfiles}/fish/.config/fish/config.fish";
     ".config/fish/functions" = {
