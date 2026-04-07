@@ -42,7 +42,7 @@
     mkdir -p "$HOME/source"
 
     if [ ! -e "$repo_dir" ]; then
-      ${pkgs.git}/bin/git clone "$repo_url" "$repo_dir"
+      GIT_SSH_COMMAND="${pkgs.openssh}/bin/ssh" ${pkgs.git}/bin/git clone "$repo_url" "$repo_dir"
     elif [ ! -d "$repo_dir/.git" ]; then
       echo "home-manager: $repo_dir exists but is not a git repo" >&2
       exit 1
