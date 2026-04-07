@@ -54,6 +54,7 @@
           export GUIX_SIGS_REPO=/home/max/source/guix.sigs/
           export SOURCES_PATH=/home/max/depends-SOURCES_PATH
           export BASE_CACHE=/home/max/depends-BASE_CACHE
+          export SDK_PATH=/home/max/depends-SDK_PATH
           unset SOURCE_DATE_EPOCH
         '';
       };

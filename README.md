@@ -102,3 +102,9 @@ Use the bundled dev shell for Guix work:
 ```bash
 nix develop .#guix
 ```
+
+### Manual steps to get guix builds working:
+
+1. Copy macos SDK(s) over and untar them
+2. Set up gpg keys for signing builds
+
