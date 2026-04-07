@@ -37,6 +37,8 @@ in
     bat
     htop
     direnv
+    tmux
+    github-copilot-cli
     neovim
   ];
 

@@ -33,6 +33,9 @@
 
   services.guix.enable = true;
 
+  nixpkgs.config.allowUnfreePredicate = pkg:
+    builtins.elem (lib.getName pkg) [ "github-copilot-cli" ];
+
   programs.git = {
     enable = true;
     config = {

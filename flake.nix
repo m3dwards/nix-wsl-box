@@ -47,6 +47,7 @@
         packages = with pkgs; [
           guix
           git
+          fish
         ];
         shellHook = ''
           export DETACHED_SIGS_REPO=/home/max/source/bitcoin-detached-sigs/
@@ -56,6 +57,7 @@
           export BASE_CACHE=/home/max/depends-BASE_CACHE
           export SDK_PATH=/home/max/depends-SDKs
           unset SOURCE_DATE_EPOCH
+          exec ${pkgs.fish}/bin/fish -l
         '';
       };
     };
