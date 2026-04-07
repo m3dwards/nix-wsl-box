@@ -77,6 +77,11 @@ in
     };
   };
 
+  home.activation.bootstrapBitcoinDetachedSigsRepo = bootstrapGitRepo {
+    repoDir = "${config.home.homeDirectory}/source/bitcoin-detached-sigs";
+    cloneUrl = "git@github.com:bitcoin-core/bitcoin-detached-sigs.git";
+  };
+
   programs.starship = {
     enable = true;
     enableFishIntegration = false;
