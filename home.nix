@@ -9,6 +9,7 @@
     bat
     htop
     direnv
+    oh-my-fish
   ];
 
   home.file = {
