@@ -95,3 +95,10 @@ ssh nixos-wsl
 ## Updating
 
 Remember to push updates to ~/nix-wsl-box to Github
+
+## Guix shell
+
+Use the bundled dev shell for Guix work:
+```bash
+nix develop .#guix
+```

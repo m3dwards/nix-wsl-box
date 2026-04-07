@@ -21,22 +21,40 @@
     };
   };
 
-  outputs = { self, nixpkgs, nixos-wsl, home-manager, dotfiles, nvim, ... }: {
-    nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
+  outputs = { self, nixpkgs, nixos-wsl, home-manager, dotfiles, nvim, ... }:
+    let
       system = "x86_64-linux";
-      modules = [
-        nixos-wsl.nixosModules.default
-        home-manager.nixosModules.home-manager
-        {
-          home-manager.useGlobalPkgs = true;
-          home-manager.useUserPackages = true;
-          home-manager.users.max = import ./home.nix;
-          home-manager.extraSpecialArgs = {
-            inherit dotfiles nvim;
-          };
-        }
-        ./configuration.nix
-      ];
+      pkgs = import nixpkgs { inherit system; };
+    in {
+      nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
+        inherit system;
+        modules = [
+          nixos-wsl.nixosModules.default
+          home-manager.nixosModules.home-manager
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.users.max = import ./home.nix;
+            home-manager.extraSpecialArgs = {
+              inherit dotfiles nvim;
+            };
+          }
+          ./configuration.nix
+        ];
+      };
+
+      devShells.${system}.guix = pkgs.mkShell {
+        packages = with pkgs; [
+          guix
+          git
+        ];
+        shellHook = ''
+          export DETACHED_SIGS_REPO=/home/max/source/bitcoin-detached-sigs/
+          export SIGNER=m3dwards
+          export GUIX_SIGS_REPO=/home/max/source/guix.sigs/
+          export SOURCES_PATH=/home/max/depends-SOURCES_PATH
+          export BASE_CACHE=/home/max/depends-BASE_CACHE
+        '';
+      };
     };
-  };
 }
