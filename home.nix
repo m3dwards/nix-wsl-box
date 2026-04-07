@@ -1,4 +1,32 @@
-{ lib, pkgs, dotfiles, nvim, ... }:
+{ config, lib, pkgs, dotfiles, nvim, ... }:
+let
+  bootstrapGitRepo = {
+    repoDir,
+    cloneUrl,
+    remotes ? { },
+  }:
+    lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      mkdir -p "$(dirname "${repoDir}")"
+
+      if [ ! -e "${repoDir}" ]; then
+        GIT_SSH_COMMAND="${pkgs.openssh}/bin/ssh" ${pkgs.git}/bin/git clone "${cloneUrl}" "${repoDir}"
+      elif [ ! -d "${repoDir}/.git" ]; then
+        echo "home-manager: ${repoDir} exists but is not a git repo" >&2
+        exit 1
+      fi
+
+      cd "${repoDir}"
+      ${lib.concatStringsSep "\n" (
+        lib.mapAttrsToList (name: url: ''
+          if ${pkgs.git}/bin/git remote get-url ${name} >/dev/null 2>&1; then
+            ${pkgs.git}/bin/git remote set-url ${name} "${url}"
+          else
+            ${pkgs.git}/bin/git remote add ${name} "${url}"
+          fi
+        '') remotes
+      )}
+    '';
+in
 {
   home.username = "max";
   home.homeDirectory = "/home/max";
@@ -17,7 +45,6 @@
   };
 
   home.file = {
-    # ".config/fish/config.fish".source = "${dotfiles}/fish/.config/fish/config.fish";
     ".config/fish/conf.d/10-starship.fish".text = ''
       starship init fish | source
     '';
@@ -34,27 +61,21 @@
     };
   };
 
-  home.activation.bootstrapBitcoinRepo = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    repo_dir="$HOME/source/bitcoin"
-    repo_url="git@github.com:m3dwards/bitcoin.git"
-    upstream_url="git@github.com:bitcoin/bitcoin.git"
+  home.activation.bootstrapBitcoinRepo = bootstrapGitRepo {
+    repoDir = "${config.home.homeDirectory}/source/bitcoin";
+    cloneUrl = "git@github.com:m3dwards/bitcoin.git";
+    remotes = {
+      upstream = "git@github.com:bitcoin/bitcoin.git";
+    };
+  };
 
-    mkdir -p "$HOME/source"
-
-    if [ ! -e "$repo_dir" ]; then
-      GIT_SSH_COMMAND="${pkgs.openssh}/bin/ssh" ${pkgs.git}/bin/git clone "$repo_url" "$repo_dir"
-    elif [ ! -d "$repo_dir/.git" ]; then
-      echo "home-manager: $repo_dir exists but is not a git repo" >&2
-      exit 1
-    fi
-
-    cd "$repo_dir"
-    if ${pkgs.git}/bin/git remote get-url upstream >/dev/null 2>&1; then
-      ${pkgs.git}/bin/git remote set-url upstream "$upstream_url"
-    else
-      ${pkgs.git}/bin/git remote add upstream "$upstream_url"
-    fi
-  '';
+  home.activation.bootstrapGuixSigsRepo = bootstrapGitRepo {
+    repoDir = "${config.home.homeDirectory}/source/guix.sigs";
+    cloneUrl = "git@github.com:m3dwards/guix.sigs.git";
+    remotes = {
+      upstream = "git@github.com:bitcoin-core/guix.sigs.git";
+    };
+  };
 
   programs.starship = {
     enable = true;
