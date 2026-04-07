@@ -9,12 +9,14 @@
     bat
     htop
     direnv
+    neovim
   ];
-
-  programs.fish.enable = true;
 
   home.file = {
     ".config/fish/config.fish".source = "${dotfiles}/fish/.config/fish/config.fish";
+    ".config/fish/conf.d/10-starship.fish".text = ''
+      starship init fish | source
+    '';
     ".config/fish/functions" = {
       source = "${dotfiles}/fish/.config/fish/functions";
       recursive = true;
@@ -28,9 +30,12 @@
     };
   };
 
+  programs.fish = {
+    enable = true;
+  }
   programs.starship = {
     enable = true;
-    enableFishIntegration = true;
+    enableFishIntegration = false;
   };
 
   # Let home-manager manage itself

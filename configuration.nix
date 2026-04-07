@@ -8,8 +8,6 @@
     wget
     curl
     git
-    fish
-    neovim
   ];
 
   services.openssh = {
@@ -29,8 +27,6 @@
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILTurm2ONYlzVmFhscmeSHPI4o4JZWM2yL+mYA87uotY youwontforgetthis@gmail.com"
     ];
   };
-
-  programs.fish.enable = true;
 
   programs.git = {
     enable = true;
