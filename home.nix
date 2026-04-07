@@ -1,4 +1,4 @@
-{ config, pkgs, dotfiles, nvim, ... }:
+{ lib, pkgs, dotfiles, nvim, ... }:
 {
   home.username = "max";
   home.homeDirectory = "/home/max";
@@ -27,6 +27,12 @@
       recursive = true;
     };
   };
+
+  home.activation.installOhMyFish = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    if [ ! -e "$HOME/.local/share/omf/init.fish" ]; then
+      ${pkgs.oh-my-fish}/bin/omf-install
+    fi
+  '';
 
   # Let home-manager manage itself
   programs.home-manager.enable = true;
