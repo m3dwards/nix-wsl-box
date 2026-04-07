@@ -63,13 +63,6 @@
         ];
         shellHook = ''
           export PATH="${pkgs.guix}/bin:$PATH"
-          export DETACHED_SIGS_REPO=/home/max/source/bitcoin-detached-sigs/
-          export SIGNER=m3dwards
-          export GUIX_SIGS_REPO=/home/max/source/guix.sigs/
-          export SOURCES_PATH=/home/max/depends-SOURCES
-          export BASE_CACHE=/home/max/depends-BASE_CACHE
-          export SDK_PATH=/home/max/depends-SDKs
-          unset SOURCE_DATE_EPOCH
           exec ${pkgs.fish}/bin/fish -l
         '';
       };

@@ -37,10 +37,20 @@ in
     bat
     htop
     direnv
+    gnumake
     tmux
     github-copilot-cli
     neovim
   ];
+
+  home.sessionVariables = {
+    DETACHED_SIGS_REPO = "/home/max/source/bitcoin-detached-sigs/";
+    SIGNER = "m3dwards";
+    GUIX_SIGS_REPO = "/home/max/source/guix.sigs/";
+    SOURCES_PATH = "/home/max/depends-SOURCES";
+    BASE_CACHE = "/home/max/depends-BASE_CACHE";
+    SDK_PATH = "/home/max/depends-SDKs";
+  };
 
   programs.fish = {
     enable = true;
@@ -49,6 +59,9 @@ in
   home.file = {
     ".config/fish/conf.d/10-starship.fish".text = ''
       starship init fish | source
+    '';
+    ".config/fish/conf.d/05-source-date-epoch.fish".text = ''
+      set -e SOURCE_DATE_EPOCH
     '';
     ".config/fish/functions" = {
       source = "${dotfiles}/fish/.config/fish/functions";
