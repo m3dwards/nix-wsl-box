@@ -31,6 +31,8 @@
 
   programs.fish.enable = true;
 
+  services.guix.enable = true;
+
   programs.git = {
     enable = true;
     config = {
