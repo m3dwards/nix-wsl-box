@@ -2,10 +2,7 @@
 {
 
   # DISABLE IPV6 Because OPNSense isn't configured properly!!
-  environment.etc."gai.conf".text = ''
-    precedence ::ffff:0:0/96 100
-  '';
-
+  networking.enableIPv6 = false;
 
   wsl.enable = true;
   wsl.defaultUser = "max";
