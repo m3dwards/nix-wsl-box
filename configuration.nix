@@ -13,7 +13,7 @@
     curl
     git
     fish
-    gpg
+    gnupg
   ];
 
   services.openssh = {
