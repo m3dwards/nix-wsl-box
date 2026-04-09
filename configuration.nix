@@ -13,6 +13,7 @@
     curl
     git
     fish
+    gpg
   ];
 
   services.openssh = {
