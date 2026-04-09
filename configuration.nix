@@ -14,6 +14,7 @@
     git
     fish
     gnupg
+    pinentry-curses #allows gpg to ask passphrase
   ];
 
   services.openssh = {
