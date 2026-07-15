@@ -1,12 +1,7 @@
 { config, lib, pkgs, ... }:
 {
-
   # DISABLE IPV6 Because OPNSense isn't configured properly!!
   networking.enableIPv6 = false;
-
-  wsl.enable = true;
-  wsl.defaultUser = "max";
-  networking.hostName = "nix-build";
 
   environment.systemPackages = with pkgs; [
     wget
@@ -17,30 +12,7 @@
     pinentry-curses #allows gpg to ask passphrase
   ];
 
-  services.openssh = {
-    enable = true;
-    ports = [ 4444 ];
-    settings = {
-      PasswordAuthentication = false;
-      PermitRootLogin = "no";
-    };
-  };
-
-  users.users.max = {
-    isNormalUser = true;
-    extraGroups = [ "wheel" ];
-    shell = pkgs.fish;
-    openssh.authorizedKeys.keys = [
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILTurm2ONYlzVmFhscmeSHPI4o4JZWM2yL+mYA87uotY youwontforgetthis@gmail.com"
-    ];
-  };
-
   programs.fish.enable = true;
-
-  services.guix.enable = true;
-
-  nixpkgs.config.allowUnfreePredicate = pkg:
-    builtins.elem (lib.getName pkg) [ "github-copilot-cli" ];
 
   programs.git = {
     enable = true;
@@ -54,6 +26,9 @@
   security.sudo.wheelNeedsPassword = false;
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
+
+  nixpkgs.config.allowUnfreePredicate = pkg:
+    builtins.elem (lib.getName pkg) [ "github-copilot-cli" ];
 
   # This value determines the NixOS release with which your system is to be
   # compatible, in order to avoid breaking some software such as database

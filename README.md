@@ -1,110 +1,109 @@
-# NixOS WSL Configuration
+# Nix Configuration
 
-## Prerequisites
+A single flake with reusable modules shared across machines:
 
-- Windows 11 with WSL2 enabled
+- **buildcorsair** — a bare-metal NixOS build server (`x86_64-linux`) that also
+  performs Bitcoin Guix builds.
+- **macOS** — a standalone [home-manager](https://github.com/nix-community/home-manager)
+  configuration (`aarch64-darwin`, user `maxedwards`).
 
-## Fresh Machine Setup
+## Layout
 
-### Install NixOS-WSL
+```
+flake.nix                  # outputs for buildcorsair, the Mac, and the guix devShell
+machines/
+  buildcorsair/            # bare-metal NixOS host (imports modules/*)
+modules/                   # shared NixOS system modules (Linux only)
+  common.nix               # nix/flakes settings, base packages, git, sudo
+  users.nix                # user 'max' + ssh keys
+  ssh.nix                  # openssh server (port 4444, key-only)
+  guix.nix                 # services.guix + guix overlay
+home/                      # shared home-manager modules
+  common.nix               # cross-platform: fish, starship, tools, nvim, dotfiles
+  bitcoin.nix              # Bitcoin dev repo bootstrap (both machines)
+  guix-builds.nix          # Guix build/signing repos + env (buildcorsair only)
+  linux.nix / mac.nix      # per-platform username, home dir, rebuild alias
+```
 
-Run the following from powershell:
+Change shared home-manager or Bitcoin config once in `home/*` and both machines
+inherit it. NixOS system modules in `modules/*` are shared between NixOS
+machines (the Mac uses standalone home-manager and does not consume them).
 
-1. Enable WSL if you haven't done already:
+## buildcorsair (NixOS)
 
-  - ```powershell
-    wsl --install --no-distribution
-    ```
+### Install NixOS
 
-2. Download `nixos.wsl` from [the latest release](https://github.com/nix-community/NixOS-WSL/releases/latest).
+Install NixOS on the machine using the [official guide](https://nixos.org/manual/nixos/stable/#sec-installation).
 
-3. Double-click the file you just downloaded (requires WSL >= 2.4.4)
+### Add an SSH key
 
-4. You can now run NixOS:
-
-- ```powershell
-  wsl -d NixOS
-  ```
-
-### Add SSH Key
-
-Create new ssh keypair and add to Github.com
+Create a new SSH keypair and add it to GitHub:
 
 ```bash
 ssh-keygen -t ed25519 -C "youremail@gmail.com"
 ```
 
 ### Clone this repo
+
 ```bash
-nix-shell -p git --command "git clone https://github.com/m3dwards/nix-wsl-box.git ~/nix-wsl-box"
-cd ~/nix-wsl-box
+nix-shell -p git --command "git clone https://github.com/m3dwards/nix.git ~/nix"
+cd ~/nix
+```
+
+### Generate the hardware configuration
+
+`machines/buildcorsair/hardware-configuration.nix` in the repo is a placeholder.
+On the machine, generate the real one and copy it in:
+
+```bash
+sudo nixos-generate-config --show-hardware-config > ~/nix/machines/buildcorsair/hardware-configuration.nix
+```
+
+Review `machines/buildcorsair/default.nix` and adjust the boot loader block if
+the machine boots via legacy BIOS/GRUB rather than UEFI/systemd-boot.
+
+### Apply the configuration
+
+```bash
+sudo nixos-rebuild switch --flake ~/nix#buildcorsair
+```
+
+Once fish is your shell, use the `rebuild` alias for subsequent switches.
+
+## macOS
+
+### Install Nix and home-manager
+
+Install Nix (e.g. the [Determinate Nix installer](https://github.com/DeterminateSystems/nix-installer)),
+then clone this repo:
+
+```bash
+git clone https://github.com/m3dwards/nix.git ~/nix
+cd ~/nix
 ```
 
 ### Apply the configuration
+
 ```bash
-sudo mv /etc/nixos/configuration.nix /etc/nixos/configuration.nix.bak
-sudo ln -s ~/nix-wsl-box/configuration.nix /etc/nixos/configuration.nix
-sudo nixos-rebuild switch
+nix run home-manager/release-25.11 -- switch --flake ~/nix#maxedwards
 ```
 
-### Switch over to using flakes
-```bash
-sudo nixos-rebuild switch --flake ~/nix-wsl-box#nixos
-# and then when the shell is restarted / sourced the rebuild command should start working
-rebuild
-```
-
-### Windows firewall rule
-
-In PowerShell (as Administrator) on the Windows host:
-```powershell
-New-NetFirewallRule -DisplayName "WSL2 NixOS SSH" -Direction Inbound `
-  -Action Allow -Protocol TCP -LocalPort 4444
-```
-
-### Enable mirrored networking
-
-In `%USERPROFILE%\.wslconfig` on Windows:
-```ini
-[wsl2]
-networkingMode=mirrored
-```
-
-Then restart WSL:
-```powershell
-wsl --shutdown
-wsl -d NixOS
-```
-
-### SSH from your Mac
-
-Add to `~/.ssh/config` on your Mac:
-```
-Host nixos-wsl
-  HostName YOUR_WINDOWS_IP
-  Port 4444
-  User max
-  IdentityFile ~/.ssh/id_ed25519
-```
-
-Then connect with:
-```bash
-ssh nixos-wsl
-```
-
-## Updating
-
-Remember to push updates to ~/nix-wsl-box to Github
+After the first switch the `rebuild` alias runs
+`home-manager switch --flake ~/nix#maxedwards`.
 
 ## Guix shell
 
-Use the bundled dev shell for Guix work:
+Use the bundled dev shell for Guix work on Linux:
+
 ```bash
 nix develop .#guix
 ```
 
-### Manual steps to get guix builds working:
+### Manual steps to get guix builds working
 
-1. Copy macos SDK(s) over and untar them
-2. Set up gpg keys for signing builds
+1. Copy the macOS SDK(s) over and untar them.
+2. Set up GPG keys for signing builds.
 
+## Updating
+
+Remember to push updates to `~/nix` to GitHub.

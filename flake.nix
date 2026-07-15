@@ -1,13 +1,9 @@
 {
-  description = "NixOS WSL configuration";
+  description = "NixOS + home-manager configuration for buildcorsair and macOS";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
-    nixos-wsl = {
-      url = "github:nix-community/NixOS-WSL";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     home-manager = {
       url = "github:nix-community/home-manager/release-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -22,48 +18,71 @@
     };
   };
 
-  outputs = { self, nixpkgs, nixpkgs-unstable, nixos-wsl, home-manager, dotfiles, nvim, ... }:
+  outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, dotfiles, nvim, ... }:
     let
-      system = "x86_64-linux";
-      # Guix 1.5.0 comes from the unstable nixpkgs pin below.
-      guix15 = nixpkgs-unstable.legacyPackages.${system}.guix;
-      guixOverlay = final: prev: {
-        guix = guix15;
+      allowUnfree = pkg:
+        builtins.elem (nixpkgs.lib.getName pkg) [ "github-copilot-cli" ];
+
+      # nixpkgs for the Mac (standalone home-manager), with unfree allowed for
+      # the packages we explicitly opt into.
+      darwinSystem = "aarch64-darwin";
+      darwinPkgs = import nixpkgs {
+        system = darwinSystem;
+        config.allowUnfreePredicate = allowUnfree;
       };
-      pkgs = import nixpkgs {
-        inherit system;
-        overlays = [ guixOverlay ];
+
+      # Guix (from unstable) for the dev shell on Linux.
+      linuxSystem = "x86_64-linux";
+      guixPkgs = import nixpkgs {
+        system = linuxSystem;
+        overlays = [
+          (final: prev: {
+            guix = nixpkgs-unstable.legacyPackages.${prev.system}.guix;
+          })
+        ];
       };
     in {
-      nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
-        inherit system;
+      nixosConfigurations.buildcorsair = nixpkgs.lib.nixosSystem {
+        system = linuxSystem;
+        specialArgs = { inherit nixpkgs-unstable; };
         modules = [
-          {
-            nixpkgs.overlays = [ guixOverlay ];
-          }
-          nixos-wsl.nixosModules.default
+          ./machines/buildcorsair/default.nix
           home-manager.nixosModules.home-manager
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
-            home-manager.users.max = import ./home.nix;
-            home-manager.extraSpecialArgs = {
-              inherit dotfiles nvim;
+            home-manager.extraSpecialArgs = { inherit dotfiles nvim; };
+            home-manager.users.max = {
+              imports = [
+                ./home/common.nix
+                ./home/bitcoin.nix
+                ./home/guix-builds.nix
+                ./home/linux.nix
+              ];
             };
           }
-          ./configuration.nix
         ];
       };
 
-      devShells.${system}.guix = pkgs.mkShell {
-        packages = with pkgs; [
+      homeConfigurations."maxedwards" = home-manager.lib.homeManagerConfiguration {
+        pkgs = darwinPkgs;
+        extraSpecialArgs = { inherit dotfiles nvim; };
+        modules = [
+          ./home/common.nix
+          ./home/bitcoin.nix
+          ./home/mac.nix
+        ];
+      };
+
+      devShells.${linuxSystem}.guix = guixPkgs.mkShell {
+        packages = with guixPkgs; [
           guix
           git
           fish
         ];
         shellHook = ''
-          export PATH="${pkgs.guix}/bin:$PATH"
-          exec ${pkgs.fish}/bin/fish -l
+          export PATH="${guixPkgs.guix}/bin:$PATH"
+          exec ${guixPkgs.fish}/bin/fish -l
         '';
       };
     };
