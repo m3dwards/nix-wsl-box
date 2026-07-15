@@ -85,7 +85,7 @@ cd ~/nix
 ### Apply the configuration
 
 ```bash
-nix run home-manager/release-25.11 -- switch --flake ~/nix#maxedwards
+nix run home-manager/release-26.05 -- switch --flake ~/nix#maxedwards
 ```
 
 After the first switch the `rebuild` alias runs
