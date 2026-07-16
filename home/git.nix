@@ -10,8 +10,6 @@ in
 {
   programs.git = {
     enable = true;
-    userName = "Max Edwards";
-    userEmail = email;
 
     # Sign every commit and tag with SSH, reusing the ed25519 key.
     signing = {
@@ -20,14 +18,15 @@ in
       signByDefault = true;
     };
 
-    extraConfig = {
+    settings = {
+      user.name = "Max Edwards";
+      user.email = email;
       init.defaultBranch = "main";
       tag.gpgSign = true;
       # Lets `git log --show-signature` / `git verify-commit` validate locally.
       gpg.ssh.allowedSignersFile = allowedSigners;
     };
   };
-
   # Maps the committer email to the signing public key for local verification.
   home.file.".config/git/allowed_signers".text = ''
     ${email} ${sshPublicKey}

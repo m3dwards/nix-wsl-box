@@ -113,6 +113,12 @@ Then run `copilot` to start it, and use `/update` inside the CLI to upgrade to
 the latest release. This is the one tool deliberately kept outside Nix so it can
 auto-update.
 
+> On NixOS (buildcorsair), the npm build ships a prebuilt, generic
+> dynamically-linked binary that won't run out of the box. `programs.nix-ld` is
+> enabled in `modules/common.nix` to provide the loader and libraries it needs.
+> If a Copilot update ever fails with a missing `lib*.so`, add that library to
+> `programs.nix-ld.libraries`.
+
 ## Guix shell
 
 Use the bundled dev shell for Guix work on Linux:
