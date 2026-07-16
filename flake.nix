@@ -20,15 +20,10 @@
 
   outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, dotfiles, nvim, ... }:
     let
-      allowUnfree = pkg:
-        builtins.elem (nixpkgs.lib.getName pkg) [ "github-copilot-cli" ];
-
-      # nixpkgs for the Mac (standalone home-manager), with unfree allowed for
-      # the packages we explicitly opt into.
+      # nixpkgs for the Mac (standalone home-manager).
       darwinSystem = "aarch64-darwin";
       darwinPkgs = import nixpkgs {
         system = darwinSystem;
-        config.allowUnfreePredicate = allowUnfree;
       };
 
       # Guix (from unstable) for the dev shell on Linux.
