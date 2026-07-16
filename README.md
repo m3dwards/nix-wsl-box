@@ -46,8 +46,8 @@ ssh-keygen -t ed25519 -C "youremail@gmail.com"
 ### Clone this repo
 
 ```bash
-nix-shell -p git --command "git clone https://github.com/m3dwards/nix.git ~/nix"
-cd ~/nix
+nix-shell -p git --command "git clone https://github.com/m3dwards/nix.git ~/source/nix"
+cd ~/source/nix
 ```
 
 ### Generate the hardware configuration
@@ -56,7 +56,7 @@ cd ~/nix
 On the machine, generate the real one and copy it in:
 
 ```bash
-sudo nixos-generate-config --show-hardware-config > ~/nix/machines/buildcorsair/hardware-configuration.nix
+sudo nixos-generate-config --show-hardware-config > ~/source/nix/machines/buildcorsair/hardware-configuration.nix
 ```
 
 Review `machines/buildcorsair/default.nix` and adjust the boot loader block if
@@ -65,7 +65,7 @@ the machine boots via legacy BIOS/GRUB rather than UEFI/systemd-boot.
 ### Apply the configuration
 
 ```bash
-sudo nixos-rebuild switch --flake ~/nix#buildcorsair
+sudo nixos-rebuild switch --flake ~/source/nix#buildcorsair
 ```
 
 Once fish is your shell, use the `rebuild` alias for subsequent switches.
@@ -78,18 +78,18 @@ Install Nix (e.g. the [Determinate Nix installer](https://github.com/Determinate
 then clone this repo:
 
 ```bash
-git clone https://github.com/m3dwards/nix.git ~/nix
-cd ~/nix
+git clone https://github.com/m3dwards/nix.git ~/source/nix
+cd ~/source/nix
 ```
 
 ### Apply the configuration
 
 ```bash
-nix run home-manager/release-26.05 -- switch --flake ~/nix#maxedwards
+nix run home-manager/release-26.05 -- switch --flake ~/source/nix#maxedwards
 ```
 
 After the first switch the `rebuild` alias runs
-`home-manager switch --flake ~/nix#maxedwards`.
+`home-manager switch --flake ~/source/nix#maxedwards`.
 
 ## Guix shell
 
@@ -106,4 +106,4 @@ nix develop .#guix
 
 ## Updating
 
-Remember to push updates to `~/nix` to GitHub.
+Remember to push updates to `~/source/nix` to GitHub.

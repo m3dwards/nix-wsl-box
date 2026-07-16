@@ -4,6 +4,6 @@
   home.homeDirectory = "/Users/maxedwards";
 
   home.file.".config/fish/conf.d/99-rebuild.fish".text = ''
-    alias rebuild "home-manager switch --flake /Users/maxedwards/nix#maxedwards"
+    alias rebuild "home-manager switch --flake /Users/maxedwards/source/nix#maxedwards"
   '';
 }
