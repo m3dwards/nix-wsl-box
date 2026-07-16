@@ -16,7 +16,7 @@ machines/
 modules/                   # shared NixOS system modules (Linux only)
   common.nix               # nix/flakes settings, base packages, git, sudo
   users.nix                # user 'max' + ssh keys
-  ssh.nix                  # openssh server (port 4444, key-only)
+  ssh.nix                  # openssh server (port 22, password auth, LAN only)
   guix.nix                 # services.guix + guix overlay
 home/                      # shared home-manager modules
   common.nix               # cross-platform: fish, starship, tools, nvim, dotfiles
@@ -50,10 +50,13 @@ nix-shell -p git --command "git clone https://github.com/m3dwards/nix.git ~/sour
 cd ~/source/nix
 ```
 
-### Generate the hardware configuration
+### Hardware configuration
 
-`machines/buildcorsair/hardware-configuration.nix` in the repo is a placeholder.
-On the machine, generate the real one and copy it in:
+`machines/buildcorsair/hardware-configuration.nix` is already the real config
+generated on buildcorsair, so no action is needed on the existing machine.
+
+Only regenerate it if the hardware changes or you reinstall on a different
+machine:
 
 ```bash
 sudo nixos-generate-config --show-hardware-config > ~/source/nix/machines/buildcorsair/hardware-configuration.nix

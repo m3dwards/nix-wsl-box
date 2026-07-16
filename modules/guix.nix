@@ -3,7 +3,7 @@
   # Guix comes from the unstable nixpkgs pin so we get a recent release.
   nixpkgs.overlays = [
     (final: prev: {
-      guix = nixpkgs-unstable.legacyPackages.${prev.system}.guix;
+      guix = nixpkgs-unstable.legacyPackages.${prev.stdenv.hostPlatform.system}.guix;
     })
   ];
 

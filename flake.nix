@@ -37,7 +37,7 @@
         system = linuxSystem;
         overlays = [
           (final: prev: {
-            guix = nixpkgs-unstable.legacyPackages.${prev.system}.guix;
+            guix = nixpkgs-unstable.legacyPackages.${prev.stdenv.hostPlatform.system}.guix;
           })
         ];
       };

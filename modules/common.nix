@@ -1,8 +1,5 @@
 { config, lib, pkgs, ... }:
 {
-  # DISABLE IPV6 Because OPNSense isn't configured properly!!
-  networking.enableIPv6 = false;
-
   environment.systemPackages = with pkgs; [
     wget
     curl

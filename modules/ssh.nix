@@ -1,11 +1,12 @@
 { config, lib, pkgs, ... }:
 {
+  # SSH on the default port with password authentication. This box is only
+  # reachable on the LAN (or via WireGuard on the router), never exposed
+  # directly to the internet.
   services.openssh = {
     enable = true;
-    ports = [ 4444 ];
     settings = {
-      PasswordAuthentication = false;
-      PermitRootLogin = "no";
+      PasswordAuthentication = true;
     };
   };
 }
