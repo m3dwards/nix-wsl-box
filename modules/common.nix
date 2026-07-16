@@ -11,15 +11,6 @@
 
   programs.fish.enable = true;
 
-  programs.git = {
-    enable = true;
-    config = {
-      init.defaultBranch = "main";
-      user.name = "Max Edwards";
-      user.email = "youwontforgetthis@gmail.com";
-    };
-  };
-
   security.sudo.wheelNeedsPassword = false;
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];

@@ -50,6 +50,7 @@
             home-manager.users.max = {
               imports = [
                 ./home/common.nix
+                ./home/git.nix
                 ./home/bitcoin.nix
                 ./home/guix-builds.nix
                 ./home/linux.nix
@@ -64,6 +65,7 @@
         extraSpecialArgs = { inherit dotfiles nvim; };
         modules = [
           ./home/common.nix
+          ./home/git.nix
           ./home/bitcoin.nix
           ./home/mac.nix
         ];
